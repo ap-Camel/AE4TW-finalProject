@@ -1,0 +1,16 @@
+﻿@page "/"
+
+@inject NavigationManager nvm
+
+<AuthorizeView>
+    <Authorized>
+
+        <h1>Hello, @context.User.Identity.Name</h1>
+    </Authorized>
+    <NotAuthorized>
+
+        <p>you are not authorized</p>
+
+    </NotAuthorized>
+</AuthorizeView>
+

@@ -1,0 +1,62 @@
+﻿@page "/login"
+
+@layout LoginLayout
+
+@using WwwPracticeDb
+@using WwwPracticeDb.Models
+@using WwwFinal.Models
+
+@inject NavigationManager nvm
+@inject AuthenticationStateProvider asp
+@inject ITeacherData _db
+
+<h3>Login as</h3>
+
+<div class="container mt-5">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-6">
+            <div class="card px-5 py-5">
+                <div class="form-data">
+                    <div class="mb-4">
+                        <button type="submit" class="btn btn-dark w-100" @onclick="() => Redirect(1)">Student</button>
+                    </div                  
+                    <div class="mb-4">
+                        <button type="submit" class="btn btn-dark w-100" @onclick="() => Redirect(2)">Teacher</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (choice == 2)
+{
+    <WwwFinal.Pages.Login.Components.TeacherLoginComponent />
+} else if (choice == 1)
+{
+    <WwwFinal.Pages.Login.Components.StudentLoginComponent />
+}
+
+
+
+@code {
+
+    private int choice;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    private async Task Redirect(int id)
+    {
+        if (id == 1)
+        {
+            choice = 1;
+        }
+        else if (id == 2)
+        {
+            choice = 2;
+        }
+    }
+}

@@ -1,0 +1,108 @@
+﻿@page "/teacher/exams"
+
+@attribute [Authorize(Roles = "teacher")]
+
+@using WwwPracticeDb
+@using WwwFinal.Models
+@using WwwPracticeDb.Models
+
+@inject IExamData _db
+@inject NavigationManager nvm
+
+<h3>Exams</h3>
+
+
+<EditForm Model="web_exam" OnValidSubmit="@InsertExam">
+
+    <p>title</p>
+    <InputText id="firstName" @bind-Value="web_exam.title" />
+    <p>status</p>
+    <InputText id="lastName" @bind-Value="web_exam.status" />
+
+    <button type="submit" class="btn btn-primary">submit</button>
+
+</EditForm>
+
+@if (list is null)
+{
+    <p><em>loading ...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>title</th>
+                <th>status</th>
+                <th>taecherID</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var e in list)
+            {
+            <tr>
+                <td>@e.examID</td>
+                <td>@e.title</td>
+                <td>@e.status</td>
+                <td>@e.teacherID</td>
+                <td><button type="submit" class="btn btn-primary" @onclick="() => DeleteExam(e)">delete</button></td>
+                <td><button type="submit" class="btn btn-primary" @onclick="() => GoToAddQuestion(e.examID)">add question</button></td>
+                <td><button type="submit" class="btn btn-primary" @onclick="() => ChangeStatus(e)">change status</button></td>
+
+                
+                
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private List<ExamModel> list;
+    private ExamPagesModel web_exam;
+    private ExamModel db_exam;
+
+    protected async override Task OnInitializedAsync()
+    {
+        web_exam = new ExamPagesModel();
+        db_exam = new ExamModel();
+
+        list = await _db.GetExams();
+    }
+
+    private async Task ChangeStatus(ExamModel e)
+    {
+        await _db.ChangeStatus(e);
+
+        nvm.NavigateTo("/teacher/exams", forceLoad: true);
+    }
+
+    private async Task InsertExam()
+    {
+        db_exam.title = web_exam.title;
+        db_exam.status = web_exam.status;
+        db_exam.teacherID = 1;
+
+        await _db.InsertExam(db_exam);
+
+        nvm.NavigateTo("/teacher/exams", forceLoad: true);
+    }
+
+    private async Task DeleteExam(ExamModel e)
+    {
+        await _db.DeleteExam(e);
+
+        nvm.NavigateTo("/teacher/exams", forceLoad: true);
+    }
+
+    private async Task GoToAddQuestion(int id)
+    {
+        nvm.NavigateTo($"/teacher/exams/addQuestion/{id}");
+    }
+}
+

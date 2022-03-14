@@ -1,0 +1,88 @@
+﻿<h3>Component</h3>
+
+@using WwwFinal.Models 
+@using WwwFinal.Controllers
+@using WwwPracticeDb.Models
+@using WwwPracticeDb
+
+@inject NavigationManager nvm
+@inject ITeacherData _db
+@inject AuthenticationStateProvider asp
+@inject IJSRuntime js
+@inject Blazored.SessionStorage.ISessionStorageService ss
+
+@inject WwwFinal.Controllers.LoginState loginState
+
+
+
+<EditForm Model="@web_teacher" OnValidSubmit="@VerifyTeacher">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <h3>teracher login</h3>
+
+    <div class="container mt-5">
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-6">
+                <div class="card px-5 py-5">
+                    <div class="form-data">
+                        <div class="forms-inputs mb-4">
+                            <span>Email <br/></span>
+                            <InputText id="email" @bind-Value="web_teacher.email" />
+                        </div>
+                        <div class="forms-inputs mb-4">
+                            <span>password <br /></span>
+                            <InputText id="password" @bind-Value="web_teacher.password" />
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-dark w-100" @onclick="@VerifyTeacher">Login</button>
+                            <p id="incorrectEntry" hidden="@hideElement">the email or password is incorrect</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</EditForm>
+
+
+
+@code {
+
+    private TeacherPagesModel web_teacher;
+    private TeacherModel db_teacher;
+
+    private bool hideElement;
+
+    protected override async Task OnInitializedAsync()
+    {
+        web_teacher = new TeacherPagesModel();
+        db_teacher = new TeacherModel();
+
+        hideElement = true;
+    }
+
+    private async Task VerifyTeacher()
+    {
+        db_teacher.email = web_teacher.email;
+        db_teacher.password = web_teacher.password;
+
+        if(await _db.VerifyTeacher(db_teacher))
+        {
+            db_teacher = await _db.GetTeacher(db_teacher);
+            ((CustomeAuthenticationStateProvider)asp).AuthenticateTeacher(db_teacher);
+
+            await ss.SetItemAsync("email", db_teacher.email);
+            await ss.SetItemAsync("role", "teacher");
+
+            loginState.LoginTeacher(db_teacher);
+
+            nvm.NavigateTo("/");
+
+        } else
+        {
+            hideElement = false;
+        }
+    }
+}

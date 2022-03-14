@@ -1,0 +1,102 @@
+﻿<h3>Component</h3>
+
+@using WwwFinal.Models
+@using WwwFinal.Controllers
+@using WwwPracticeDb.Models
+@using WwwPracticeDb
+
+@inject NavigationManager nvm
+@inject IStudentData _db
+@inject AuthenticationStateProvider asp
+@inject IJSRuntime js
+@inject Blazored.SessionStorage.ISessionStorageService ss
+
+@inject LoginState loginState
+
+<h3>student login</h3>
+
+<EditForm Model="@web_student" OnValidSubmit="@Verify">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="container mt-5">
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-6">
+                <div class="card px-5 py-5">
+                    <div class="form-data">
+                        <div class="forms-inputs mb-4">
+                            <span>Email <br /></span>
+                            <InputText id="email" @bind-Value="web_student.email" />
+                        </div>
+                        <div class="forms-inputs mb-4">
+                            <span>password <br /></span>
+                            <InputText id="password" @bind-Value="web_student.password" />
+                        </div>
+                        <div class="mb-3">
+                        <button type="submit" class="btn btn-dark w-100" @onclick="@Verify">Login</button>
+                        <p id="incorrectEntry" hidden="@hideElement">the email or password is incorrect</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+</EditForm>
+
+
+
+@code {
+
+    private StudentPagesModel web_student;
+    private StudentModel db_student;
+
+    private bool hideElement;
+
+    protected override async Task OnInitializedAsync()
+    {
+        web_student = new StudentPagesModel();
+        db_student = new StudentModel();
+
+        hideElement = true;
+    }
+
+    private async Task Verify()
+    {
+        db_student.email = web_student.email;
+        db_student.password = web_student.password;
+
+        if(await _db.VerifyStudent(db_student))
+        {
+
+            db_student = await _db.GetStudent(db_student);
+            ((CustomeAuthenticationStateProvider)asp).AuthenticateStudent(db_student);
+            await ss.SetItemAsync("email", web_student.email);
+            await ss.SetItemAsync("role", "student");
+
+            loginState.LoginStudent(db_student);
+
+            nvm.NavigateTo("/");
+        }
+        else
+        {
+            hideElement = false;
+        }
+
+        //if (await _db.VerifyTeacher(db_teacher))
+        //{
+        //    ((CustomeAuthenticationStateProvider)asp).AuthenticateTeacher(await _db.GetTeacher(db_teacher));
+        //    await ss.SetItemAsync("email", web_student.email);
+        //    await ss.SetItemAsync("role", "student");
+        //    nvm.NavigateTo("/");
+
+        //}
+        //else
+        //{
+        //    hideElement = false;
+        //}
+    }
+}
+

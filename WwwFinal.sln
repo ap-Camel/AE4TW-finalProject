@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WwwFinal", "WwwFinal\WwwFinal.csproj", "{E1AC13B5-046F-4645-B4EF-11D65EE60C2F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WwwPracticeDb", "..\WwwPractice01\WwwPracticeDb\WwwPracticeDb.csproj", "{0471E649-9092-47BF-A1BF-1289B6ECE8C4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E1AC13B5-046F-4645-B4EF-11D65EE60C2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1AC13B5-046F-4645-B4EF-11D65EE60C2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1AC13B5-046F-4645-B4EF-11D65EE60C2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1AC13B5-046F-4645-B4EF-11D65EE60C2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0471E649-9092-47BF-A1BF-1289B6ECE8C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0471E649-9092-47BF-A1BF-1289B6ECE8C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0471E649-9092-47BF-A1BF-1289B6ECE8C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0471E649-9092-47BF-A1BF-1289B6ECE8C4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1157C112-93A7-4885-83DC-758F885A992F}
+	EndGlobalSection
+EndGlobal

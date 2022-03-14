@@ -1,0 +1,102 @@
+﻿@page "/teacher/questions"
+
+@attribute [Authorize(Roles = "teacher")]
+
+@using WwwPracticeDb
+@using WwwFinal.Models
+@using WwwPracticeDb.Models
+@using WwwFinal.Controllers
+
+@inject IQuestionData _db
+@inject NavigationManager nvm
+
+@inject LoginState loginState
+
+<h3>Questions</h3>
+
+<EditForm Model="web_question" OnValidSubmit="@InsertQuestion">
+
+    <p>question</p>
+    <InputText id="question" @bind-Value="web_question.question" />
+    <p>correct answer</p>
+    <InputText id="Canswer" @bind-Value="web_question.Canswer" />
+    <p>wrong answer01</p>
+    <InputText id="Ranswer01" @bind-Value="web_question.Ranswer01" />
+    <p>wrong answer02</p>
+    <InputText id="Ranswer02" @bind-Value="web_question.Ranswer02" />
+    <p>wrong answer03</p>
+    <InputText id="Ranswer03" @bind-Value="web_question.Ranswer03" />
+
+    <button type="submit" class="btn btn-primary">submit</button>
+
+</EditForm>
+
+@if (list is null)
+{
+    <p><em>loading ...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>question</th>
+                <th>correct answer</th>
+                <th>wrong answer 01</th>
+                <th>wrong answer 02</th>
+                <th>wrong answer 03</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var q in list)
+            {
+                <tr>
+                    <td>@q.question</td>
+                    <td>@q.Canswer</td>
+                    <td>@q.Ranswer01</td>
+                    <td>@q.Ranswer02</td>
+                    <td>@q.Ranswer03</td>
+
+                    <button type="submit" class="btn btn-primary" @onclick="() => DeleteQuestion(q)">delete</button>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<QuestionModel> list;
+    private QuestionPagesModel web_question;
+    private QuestionModel db_question;
+
+    protected override async Task OnInitializedAsync()
+    {
+        web_question = new QuestionPagesModel();
+        db_question = new QuestionModel();
+
+        list = await _db.GetQuestions(loginState.LoginID);
+    }
+
+    private async Task InsertQuestion()
+    {
+        db_question.question = web_question.question;
+        db_question.Canswer = web_question.Canswer;
+        db_question.Ranswer01 = web_question.Ranswer01;
+        db_question.Ranswer02 = web_question.Ranswer02;
+        db_question.Ranswer03 = web_question.Ranswer03;
+        db_question.teacherID = loginState.LoginID;
+
+        await _db.InsertQuestion(db_question);
+        db_question = await _db.GetLastQuestion();
+        await _db.AddExamQuestion(0, db_question.questionID);
+
+        nvm.NavigateTo("/teacher/questions", forceLoad: true);
+    }
+
+    private async Task DeleteQuestion(QuestionModel q)
+    {
+        await _db.DeleteQuestion(q);
+
+        nvm.NavigateTo("/teacher/questions", forceLoad: true);
+    }
+}

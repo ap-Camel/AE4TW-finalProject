@@ -1,0 +1,199 @@
+﻿@page "/student/takeExam/{examID}"
+
+@using WwwFinal.Models
+@using WwwFinal.Controllers
+@using WwwPracticeDb
+@using WwwPracticeDb.Models
+
+@inject NavigationManager nvm
+@inject IJSRuntime js
+@inject IQuestionData _db
+@inject IMarkData _db2
+
+@inject LoginState loginState
+
+@if (list == null)
+{
+    <p>loading ...</p>
+}
+else
+{
+    foreach(QuestionPagesModel q in webList)
+    {
+        <h4>@q.question</h4>
+        <div class="container">
+            <div class="row justify-content-start">
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary align-self-center" @onclick="() => ChooseAnswer(q, 0)">A</button>
+                </div>
+                <div class="col-md-11">
+                    <p>@ListOfQuestionAnswers[q.index][0]</p>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row justify-content-start">
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary align-self-center" @onclick="() => ChooseAnswer(q, 1)">B</button>
+                </div>
+                <div class="col-md-11">
+                    <p>@ListOfQuestionAnswers[q.index][1]</p>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row justify-content-start">
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary align-self-center" @onclick="() => ChooseAnswer(q, 2)">C</button>
+                </div>
+                <div class="col-md-11">
+                    <p>@ListOfQuestionAnswers[q.index][2]</p>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row justify-content-start">
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary align-self-center" @onclick="() => ChooseAnswer(q, 3)">D</button>
+                </div>
+                <div class="col-md-11">
+                    <p>@ListOfQuestionAnswers[q.index][3]</p>
+                </div>
+            </div>
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary align-self-center" @onclick="@Submit">submit</button>
+}
+
+
+
+@code {
+    [Parameter]
+    public string examID { get; set; }
+
+    private List<QuestionModel> list;
+    private List<QuestionPagesModel> webList;
+    private List<QuestionData> returnList;
+    private List<string[]> ListOfQuestionAnswers = new List<string[]>();
+    private List<ChoosenAnswersModel> choosenAnswers = new List<ChoosenAnswersModel>();
+    private string choosenAnswer;
+    string[] answers = new string[4];
+    private int index;
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        index = 0;
+        list = await _db.GetExamingQuestions(1, 1);
+        webList = new List<QuestionPagesModel>();
+
+        for(int i = 0; i < list.Count; i++)
+        {
+            webList.Add(new QuestionPagesModel(list[i].questionID, list[i].question, list[i].Canswer, list[i].Ranswer01, list[i].Ranswer02, list[i].Ranswer03, i));
+
+            answers = randomize(list[i]);
+            ListOfQuestionAnswers.Add(answers);
+            choosenAnswers.Add(new ChoosenAnswersModel());
+        }
+    }
+
+    private async Task incriment()
+    {
+        index++;
+    }
+
+    private async Task Submit()
+    {
+        int mark = await _db.verify(choosenAnswers);
+
+        await _db2.AddMark(mark, loginState.LoginID, int.Parse(examID));
+
+        await js.InvokeVoidAsync("alert", $"your mark was {mark}");
+
+        nvm.NavigateTo("/");
+    }
+
+    private async Task ChooseAnswer(QuestionPagesModel q, int ans)
+    {
+        choosenAnswer = ListOfQuestionAnswers[q.index][ans];
+        choosenAnswers[q.index].answer = choosenAnswer;
+        choosenAnswers[q.index].questionID = q.questionID;
+        choosenAnswer = null;
+    }
+
+    private string[] randomize(QuestionModel q)
+    {
+        string[] answers = new string[4];
+
+        int[] puttedAnswers = new int[4] { 9, 9, 9, 9 };
+        Random rand = new Random();
+        int random;
+
+        bool found = false;
+
+        random = rand.Next(4);
+        puttedAnswers[0] = random;
+        answers[random] = q.Canswer;
+
+        while (true)
+        {
+            found = false;
+            random = rand.Next(4);
+            for (int i = 0; i < 4; i++)
+            {
+                if(puttedAnswers[i] == random)
+                {
+                    found = true;
+                }
+            }
+            if(!found)
+            {
+                puttedAnswers[1] = random;
+                answers[random] = q.Ranswer01;
+                break;
+            }
+        }
+
+        while (true)
+        {
+            found = false;
+            random = rand.Next(4);
+            for (int i = 0; i < 4; i++)
+            {
+                if (puttedAnswers[i] == random)
+                {
+                    found = true;
+                }
+            }
+            if (!found)
+            {
+                puttedAnswers[2] = random;
+                answers[random] = q.Ranswer02;
+                break;
+            }
+        }
+
+        while (true)
+        {
+            found = false;
+            random = rand.Next(4);
+            for (int i = 0; i < 4; i++)
+            {
+                if (puttedAnswers[i] == random)
+                {
+                    found = true;
+                }
+            }
+            if (!found)
+            {
+                puttedAnswers[3] = random;
+                answers[random] = q.Ranswer03;
+                break;
+            }
+        }
+
+        return answers;
+
+    }
+}

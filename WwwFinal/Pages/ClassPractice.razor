@@ -1,0 +1,66 @@
+﻿@page "/class"
+
+@using WwwFinal.Classes
+@using System.Linq
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>price</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Product p in productList.Where(product => product.price >= 20))
+        {
+            <tr>
+                <td>@p.ID</td>
+                <td>@p.price</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br/>
+<br/>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>price</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (User u in userList)
+        {
+            <tr>
+                <td>@u.ID</td>
+                <td>@u.name</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {       
+
+    private List<Product> productList;
+    private List<User> userList;
+    protected override void OnInitialized()
+    {
+
+        productList = new List<Product>
+        {
+            new Product(1, 10),
+            new Product(2, 100),
+            new Product(3, 400)
+        };
+
+        userList = new List<User>
+        {
+            new User(1, "name1"),
+            new User(2, "name2"),
+            new User(3, "name3")
+        };
+}
+
+}

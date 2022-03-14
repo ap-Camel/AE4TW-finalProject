@@ -1,0 +1,111 @@
+﻿@page "/teacher/students"
+
+@attribute [Authorize(Roles = "teacher")]
+
+@using WwwPracticeDb
+@using WwwFinal.Models
+@using WwwPracticeDb.Models
+@using WwwFinal.Controllers
+
+@inject IStudentData _db
+@inject NavigationManager nvm
+@inject IJSRuntime js
+
+@inject WwwFinal.Controllers.LoginState loginState
+
+
+
+
+<h3>Students</h3>
+
+<EditForm Model="@web_student" OnValidSubmit="@InsertStudent">
+
+    @*<p>first name</p>
+        <InputText id="firstName" @bind-Value="web_student.firstName" />
+        <p>last name</p>
+        <InputText id="lastName" @bind-Value="web_student.lastName" />
+        <p>password</p>
+        <InputText id="password" @bind-Value="web_student.password" />
+        <p>email</p>
+        <InputText id="email" @bind-Value="web_student.email" />*@
+
+    <p>ID</p>
+    <InputText id="ID" @bind-Value="web_student.studentID" />
+
+    <button type="submit" class="btn btn-primary">submit</button>
+
+
+</EditForm>
+
+
+
+@if (studentList is null)
+{
+    <p><em>loading ...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>first name</th>
+                <th>last name</th>
+                <th>email</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in studentList)
+            {
+                <tr>
+                    <td>@s.studentID</td>
+                    <td>@s.firstName</td>
+                    <td>@s.lastName</td>
+                    <td>@s.email</td>
+
+                    <button type="submit" class="btn btn-primary" @onclick="() => DeleteStudent(s)">remove</button>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<StudentModel> studentList;
+    private StudentPagesModel web_student;
+    private StudentModel db_student;
+
+    protected override async Task OnInitializedAsync()
+    {
+        web_student = new StudentPagesModel();
+        db_student = new StudentModel();
+
+        studentList = await _db.GetStudents(loginState.LoginID);
+    }
+
+    private async Task InsertStudent()
+    {
+        db_student.firstName = web_student.firstName;
+        db_student.lastName = web_student.lastName;
+        db_student.password = web_student.password;
+        db_student.email = web_student.email;
+        db_student.studentID = int.Parse(web_student.studentID);
+
+        if(await _db.AddStudent(loginState.LoginID, db_student.studentID))
+        {
+            await js.InvokeVoidAsync("alert", "Student was added");
+        } else
+        {
+            await js.InvokeVoidAsync("alert", "Student was not added");
+        }
+
+        nvm.NavigateTo("/teacher/students", forceLoad: true);
+    }
+
+    private async Task DeleteStudent(StudentModel s)
+    {
+        await _db.RemoveStudent(s.studentID, loginState.LoginID);
+
+        nvm.NavigateTo("/teacher/students", forceLoad: true);
+    }
+}

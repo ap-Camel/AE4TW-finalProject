@@ -1,0 +1,143 @@
+﻿@page "/teacher/exams/addQuestion/{examID}"
+
+@using WwwFinal.Models;
+@using WwwPracticeDb.Models;
+@using WwwPracticeDb
+@using WwwFinal.Controllers
+
+@inject IQuestionData _db
+@inject IJSRuntime js
+@inject NavigationManager nvm
+
+@inject LoginState loginState
+
+<h3>AddExamQuestion</h3>
+<p>the id is @examID</p>
+
+
+<button type="submit" class="btn btn-primary" @onclick="() => Redirect(1)">add new question</button>
+<button type="submit" class="btn btn-primary" @onclick="() => Redirect(2)">add from existing questions</button>
+
+@if (choice == 1)
+{
+    <EditForm Model="web_question" OnValidSubmit="@AddQuestion">
+
+        <p>question</p>
+        <InputText id="question" @bind-Value="web_question.question" />
+        <p>correct answer</p>
+        <InputText id="Canswer" @bind-Value="web_question.Canswer" />
+        <p>wrong answer01</p>
+        <InputText id="Ranswer01" @bind-Value="web_question.Ranswer01" />
+        <p>wrong answer02</p>
+        <InputText id="Ranswer02" @bind-Value="web_question.Ranswer02" />
+        <p>wrong answer03</p>
+        <InputText id="Ranswer03" @bind-Value="web_question.Ranswer03" />
+
+        <button type="submit" class="btn btn-primary">submit</button>
+
+    </EditForm>
+
+}
+else if (choice == 2)
+{
+
+}
+
+<h3>exam questions</h3>
+
+@if (list is null)
+{
+    <p><em>loading ...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>question</th>
+                <th>correct answer</th>
+                <th>wrong answer 01</th>
+                <th>wrong answer 02</th>
+                <th>wrong answer 03</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var q in list)
+            {
+                <tr>
+                    <td>@q.question</td>
+                    <td>@q.Canswer</td>
+                    <td>@q.Ranswer01</td>
+                    <td>@q.Ranswer02</td>
+                    <td>@q.Ranswer03</td>
+                    <td><button type="submit" class="btn btn-primary" @onclick="() => RemoveQuestion(q)">remove</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    [Parameter]
+    public string examID { get; set; }
+    private int choice { get; set; }
+
+    private List<QuestionModel> list;
+    private QuestionPagesModel web_question;
+    private QuestionModel db_question;
+
+    protected override async Task OnInitializedAsync()
+    {
+        list = new List<QuestionModel>();
+        web_question = new QuestionPagesModel();
+        db_question = new QuestionModel();
+
+        list = await _db.GetExamQuestions(loginState.LoginID, int.Parse(examID));
+    }
+
+    private async Task Redirect(int id)
+    {
+        if (id == 1)
+        {
+            choice = 1;
+        }
+        else if (id == 2)
+        {
+            choice = 2;
+        }
+    }
+
+    private async Task AddQuestion()
+    {
+        db_question.question = web_question.question;
+        db_question.Canswer = web_question.Canswer;
+        db_question.Ranswer01 = web_question.Ranswer01;
+        db_question.Ranswer02 = web_question.Ranswer02;
+        db_question.Ranswer03 = web_question.Ranswer03;
+        db_question.teacherID = loginState.LoginID;
+
+        await _db.InsertQuestion(db_question);
+        db_question = await _db.GetLastQuestion();
+
+
+        if (await _db.AddExamQuestion(int.Parse(examID), db_question.questionID))
+        {
+            await js.InvokeVoidAsync("alert", "question was added");
+        }
+        else
+        {
+            await js.InvokeVoidAsync("alert", "question was not added");
+        }
+
+        nvm.NavigateTo($"/teacher/exams/addQuestion/{examID}", forceLoad: true);
+    }
+
+    private async Task RemoveQuestion(QuestionModel q)
+    {
+        await _db.RemoveQuestion(int.Parse(examID), q);
+
+        nvm.NavigateTo($"/teacher/exams/addQuestion/{examID}", forceLoad: true);
+    }
+}

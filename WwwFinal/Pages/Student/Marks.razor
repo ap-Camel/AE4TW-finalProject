@@ -1,0 +1,51 @@
+﻿@page "/student/marks"
+
+@using WwwFinal.Models
+@using WwwFinal.Controllers
+@using WwwPracticeDb
+@using WwwPracticeDb.Models
+
+@inject NavigationManager nvm
+@inject IJSRuntime js
+@inject IMarkData _db
+
+@inject LoginState loginState
+
+<h3>Marks</h3>
+
+@if (list is null)
+{
+    <p><em>loading ...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>mark</th>
+                <th>exam</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (MarkModel m in list)
+            {
+                <tr>
+                    <td>@m.mark</td>
+                    <td>@m.examID</td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<MarkModel> list;
+
+    protected async override Task OnInitializedAsync()
+    {
+        list = await _db.GetMarks(loginState.LoginID);
+    }
+
+}
