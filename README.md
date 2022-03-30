@@ -30,22 +30,22 @@ Web application using client-server technologies (HTML, CSS, JavaScript, PHP) wi
 ## some pictures
 
 login page as teacher or student
-[login page](https://github.com/ap-Camel/AE4TW-finalProject/blob/master/Pictures/Screenshot%202022-03-30%20234040.png)
+![login page](https://github.com/ap-Camel/AE4TW-finalProject/blob/master/Pictures/Screenshot%202022-03-30%20234040.png)
 
 here the teacher can see theri students
-[students page](https://github.com/ap-Camel/AE4TW-finalProject/blob/master/Pictures/Screenshot%202022-03-30%20234847.png)
+![students page](https://github.com/ap-Camel/AE4TW-finalProject/blob/master/Pictures/Screenshot%202022-03-30%20234847.png)
 
 here the teacher can see theri exams
-[exams page](https://github.com/ap-Camel/AE4TW-finalProject/blob/master/Pictures/Screenshot%202022-03-30%20234914.png)
+![exams page](https://github.com/ap-Camel/AE4TW-finalProject/blob/master/Pictures/Screenshot%202022-03-30%20234914.png)
 
 here the teacher can see their questions
-[questions page](https://github.com/ap-Camel/AE4TW-finalProject/blob/master/Pictures/Screenshot%202022-03-30%20234942.png)
+![questions page](https://github.com/ap-Camel/AE4TW-finalProject/blob/master/Pictures/Screenshot%202022-03-30%20234942.png)
 
 here the student can see their available exams
-[available exams page](https://github.com/ap-Camel/AE4TW-finalProject/blob/master/Pictures/Screenshot%202022-03-30%20235019.png)
+![available exams page](https://github.com/ap-Camel/AE4TW-finalProject/blob/master/Pictures/Screenshot%202022-03-30%20235019.png)
 
 here the student is taking the examination
-[eamination page](https://github.com/ap-Camel/AE4TW-finalProject/blob/master/Pictures/Screenshot%202022-03-30%20235038.png)
+![eamination page](https://github.com/ap-Camel/AE4TW-finalProject/blob/master/Pictures/Screenshot%202022-03-30%20235038.png)
 
 
 
