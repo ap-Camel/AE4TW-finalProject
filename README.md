@@ -10,20 +10,20 @@ Web application using client-server technologies (HTML, CSS, JavaScript, PHP) wi
 
 ## website description 
 
-*This website provides a place where teachers can create online exams and publish the exams so their students can take those exams online
-*Teacher can create exams and questions, they can create questions and add them to exams seperatly
-*Teacher can also add and remove their students
-*When a student takes an exam, the questions and the answers will be choosen randomly so that no two students will have the same questions
+* This website provides a place where teachers can create online exams and publish the exams so their students can take those exams online.
+* Teacher can create exams and questions, they can create questions and add them to exams seperatly
+* Teacher can also add and remove their students
+* When a student takes an exam, the questions and the answers will be choosen randomly so that no two students will have the same questions
 
 --------------------------------------------------------------------------------------------------------------
 
 ## solution description
 
-*The login is provided but it is only simple login and there isn't any encryption or password hasshing
-*The logged in user is saved using session storage using [this library](https://github.com/Blazored/SessionStorage)
-*Roles are also used to differentiate between student and teacher
-*Dapper is used for the ORM and for the databse, MS SQL server is used
-*There is no design for the website, I mainly used all the default designs provided
+* The login is provided but it is only simple login and there isn't any encryption or password hasshing
+* The logged in user is saved using session storage using [this library](https://github.com/Blazored/SessionStorage)
+* Roles are also used to differentiate between student and teacher
+* Dapper is used for the ORM and for the databse, MS SQL server is used
+* There is no design for the website, I mainly used all the default designs provided
 
 --------------------------------------------------------------------------------------------------------------
 
